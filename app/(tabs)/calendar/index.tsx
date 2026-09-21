@@ -168,6 +168,24 @@ export default function CalendarScreen() {
     return monthYear;
   }, [date, agendaVisibleDate, viewMode, language, t]);
 
+  const handleMonthPageChange = useCallback(
+    (firstOfMonth: Date) => {
+      if (useCalendarStore.getState().viewMode === 'month') {
+        nav.onPageChange(firstOfMonth);
+      }
+    },
+    [nav.onPageChange]
+  );
+
+  const handleGridPageChange = useCallback(
+    (focusDate: Date) => {
+      if (isCalMode(useCalendarStore.getState().viewMode)) {
+        nav.onPageChange(focusDate);
+      }
+    },
+    [nav.onPageChange]
+  );
+
   if (calendarApp === 'unconfigured') {
     return <CalendarUnavailable />;
   }
@@ -193,7 +211,7 @@ export default function CalendarScreen() {
             weekStartsOn={deferredWeekStartsOn}
             jump={nav.jump}
             onSelectDate={nav.setDate}
-            onMonthChange={nav.onPageChange}
+            onMonthChange={handleMonthPageChange}
             onPressEvent={handlePressEventFromMonth}
             onPressCell={handlePressCell}
           />
@@ -223,7 +241,7 @@ export default function CalendarScreen() {
             jump={nav.jump}
             commitZoom={commitZoom}
             initialScrollHour={nowHour}
-            onPageChange={nav.onPageChange}
+            onPageChange={handleGridPageChange}
             onPressSlot={handlePressCell}
             onPressEvent={handlePressGridEvent}
             onPressAllDayEvent={handlePressEventFromMonth}
