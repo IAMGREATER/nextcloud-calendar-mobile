@@ -9,6 +9,7 @@ import { TalkToggle } from './TalkToggle';
 import { AttendeesField } from './AttendeesField';
 import { requestAlertPermission } from '@/features/notifications/scheduleAlerts';
 import { useSettingsStore } from '@/stores/settingsStore';
+import { isWritableCalendar } from '@/utils/calendars';
 import { useTimeFormat } from '@/hooks/useTimeFormat';
 import { getNativePickerLocale } from '@/utils/i18n';
 import { AlertPicker } from './AlertPicker';
@@ -66,12 +67,16 @@ export function EventForm({
     : `${language}-${use24h ? 'GB' : 'US'}`;
 
   const [summary, setSummary] = useState(initialValues?.summary ?? '');
-  const writableCalendars = calendars.filter(
-    (c) => !c.isReadOnly && !c.isSubscribed && c.supportsEvents !== false,
+  const writableCalendars = calendars.filter(isWritableCalendar);
+  const storedDefault = useSettingsStore((s) =>
+    account ? s.defaultCalendarByAccount[account.id] : undefined,
   );
 
   const defaultCalendarId =
     initialValues?.calendarId ??
+    (storedDefault && writableCalendars.some((c) => c.id === storedDefault)
+      ? storedDefault
+      : undefined) ??
     writableCalendars.find((c) => c.slug.toLowerCase() === 'personal')?.id ??
     writableCalendars[0]?.id ?? '';
   const [calendarId, setCalendarId] = useState(defaultCalendarId);
