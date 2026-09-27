@@ -6,6 +6,7 @@ import type { SharedValue } from 'react-native-reanimated';
 import { ThemeWrapper } from '../helpers/theme';
 import { TimeGridView } from '@/features/calendar/components/TimeGridView';
 import { toGridEvents } from '@/features/calendar/utils/toGridEvents';
+import { useSettingsStore } from '@/stores/settingsStore';
 import {
   ALL_DAY_PAD,
   ALL_DAY_ROW_HEIGHT,
@@ -20,13 +21,15 @@ jest.mock('@react-native-async-storage/async-storage', () =>
 );
 
 let mockCapturedPagerProps: any[] = [];
+const mockSetPage = jest.fn();
 
 jest.mock('react-native-infinite-pager', () => {
   const React = require('react');
   return {
     __esModule: true,
-    default: React.forwardRef((props: any, _ref: any) => {
+    default: React.forwardRef((props: any, ref: any) => {
       mockCapturedPagerProps.push(props);
+      React.useImperativeHandle(ref, () => ({ setPage: mockSetPage }));
       return props.renderPage ? props.renderPage({ index: 0 }) : null;
     }),
   };
@@ -62,6 +65,7 @@ function view(over: Partial<React.ComponentProps<typeof TimeGridView>> = {}) {
       hourRowHeight={60}
       cellHeight={{ value: 60 } as SharedValue<number>}
       weekStartsOn={1}
+      active
       commitZoom={jest.fn()}
       initialScrollHour={8}
       onPageChange={jest.fn()}
@@ -76,11 +80,26 @@ function view(over: Partial<React.ComponentProps<typeof TimeGridView>> = {}) {
 describe('TimeGridView', () => {
   beforeEach(() => {
     mockCapturedPagerProps = [];
+    mockSetPage.mockClear();
+  });
+
+  // Regression: all views stay mounted, so a day selection in month view bumps
+  // the shared jump. A hidden grid must ignore it — otherwise it animates and
+  // writes its week-rounded focus date back over the selection (issue #278).
+  it('ignores jumps while inactive but honors them once active', () => {
+    const jumpTarget = new Date(2026, 7, 21); // 2 weeks from the anchor
+    const { rerender } = render(view({ active: false }));
+    rerender(view({ active: false, jump: { nonce: 1, target: jumpTarget } }));
+    expect(mockSetPage).not.toHaveBeenCalled();
+
+    rerender(view({ active: true, jump: { nonce: 2, target: jumpTarget } }));
+    expect(mockSetPage).toHaveBeenCalled();
   });
 
   it('renders the 24 hour labels exactly once, outside the pager', () => {
+    useSettingsStore.setState({ timeFormat: '24h' });
     const { getAllByText } = render(view());
-    expect(getAllByText('9:00')).toHaveLength(1);
+    expect(getAllByText('09:00')).toHaveLength(1);
     expect(getAllByText('23:00')).toHaveLength(1);
   });
 

@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { View, StyleSheet, ScrollView, Platform, KeyboardAvoidingView, useWindowDimensions, LayoutChangeEvent } from 'react-native';
+import { View, StyleSheet, ScrollView, Platform, KeyboardAvoidingView, Keyboard, useWindowDimensions, LayoutChangeEvent } from 'react-native';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
@@ -8,6 +8,10 @@ import { useTheme } from 'expo-router';
 import { TalkToggle } from './TalkToggle';
 import { AttendeesField } from './AttendeesField';
 import { requestAlertPermission } from '@/features/notifications/scheduleAlerts';
+import { useSettingsStore } from '@/stores/settingsStore';
+import { isWritableCalendar } from '@/utils/calendars';
+import { useTimeFormat } from '@/hooks/useTimeFormat';
+import { getNativePickerLocale } from '@/utils/i18n';
 import { AlertPicker } from './AlertPicker';
 import { RecurrencePicker } from './RecurrencePicker';
 import { Stack, Typography, TextField, DateField, Button, Chip, Toggle } from '@/ui/components';
@@ -25,7 +29,7 @@ interface InitialValues {
   location?: string;
   attendees?: Attendee[];
   rrule?: RecurrenceRule;
-  alarmMinutes?: number;
+  alarms?: number[];
 }
 
 interface Props {
@@ -51,15 +55,28 @@ export function EventForm({
 }: Props) {
   const theme = useTheme();
   const { t } = useTranslation();
+  const { use24h, timeFormat, formatTime } = useTimeFormat();
+  const language = useSettingsStore((s) => s.language);
   const twoColDates = useWindowDimensions().width >= 600;
 
+  // The iOS wheel picker ignores is24Hour; its hour cycle follows the picker
+  // locale's region. For an explicit 12h/24h choice we pin a matching region
+  // while keeping the app language for labels. 'auto' uses the device region.
+  const iosPickerLocale = timeFormat === 'auto'
+    ? getNativePickerLocale(language)
+    : `${language}-${use24h ? 'GB' : 'US'}`;
+
   const [summary, setSummary] = useState(initialValues?.summary ?? '');
-  const writableCalendars = calendars.filter(
-    (c) => !c.isReadOnly && !c.isSubscribed && c.supportsEvents !== false,
+  const writableCalendars = calendars.filter(isWritableCalendar);
+  const storedDefault = useSettingsStore((s) =>
+    account ? s.defaultCalendarByAccount[account.id] : undefined,
   );
 
   const defaultCalendarId =
     initialValues?.calendarId ??
+    (storedDefault && writableCalendars.some((c) => c.id === storedDefault)
+      ? storedDefault
+      : undefined) ??
     writableCalendars.find((c) => c.slug.toLowerCase() === 'personal')?.id ??
     writableCalendars[0]?.id ?? '';
   const [calendarId, setCalendarId] = useState(defaultCalendarId);
@@ -74,7 +91,7 @@ export function EventForm({
   const [talkRoomType, setTalkRoomType] = useState<TalkRoomType>('private');
   const [attendees, setAttendees] = useState<Attendee[]>(initialValues?.attendees ?? []);
   const [rrule, setRrule] = useState<RecurrenceRule | undefined>(initialValues?.rrule);
-  const [alarmMinutes, setAlarmMinutes] = useState<number | undefined>(initialValues?.alarmMinutes);
+  const [alarms, setAlarms] = useState<number[] | undefined>(initialValues?.alarms);
   const [titleError, setTitleError] = useState<string | null>(null);
   const [calendarError, setCalendarError] = useState<string | null>(null);
   const [endError, setEndError] = useState<string | null>(null);
@@ -170,6 +187,7 @@ export function EventForm({
   }
 
   function handleSubmit() {
+    Keyboard.dismiss();
     setTitleError(null);
     setCalendarError(null);
     if (!summary.trim()) { setTitleError(t('event.errorTitleRequired')); return; }
@@ -181,12 +199,16 @@ export function EventForm({
     } else if (dtend <= dtstart) {
       setEndError(t('event.errorEndAfterStart')); return;
     }
-    if (alarmMinutes !== undefined) void requestAlertPermission();
+    const { timedAlerts, allDayAlerts } = useSettingsStore.getState();
+    const willAlert = alarms === undefined
+      ? (allDay ? allDayAlerts : timedAlerts).length > 0
+      : alarms.length > 0;
+    if (willAlert) void requestAlertPermission();
 
     onSubmit({
       summary: summary.trim(), calendarId, dtstart, dtend, allDay,
       description, location, attendees, withTalkRoom, talkRoomType,
-      organizerEmail, organizerName, rrule, alarmMinutes,
+      organizerEmail, organizerName, rrule, alarms,
     });
   }
 
@@ -200,6 +222,7 @@ export function EventForm({
             mode={allDay ? 'date' : 'datetime'}
             display="compact"
             accentColor={theme.colors.primary}
+            locale={iosPickerLocale}
             onChange={handleIosStartChange}
           />
         </View>
@@ -207,7 +230,7 @@ export function EventForm({
         <DateField
           label={t('event.start')}
           value={dayjs(dtstart).format('ddd ll')}
-          time={allDay ? undefined : dayjs(dtstart).format('LT')}
+          time={allDay ? undefined : formatTime(dtstart)}
           onPress={openStartPicker}
         />
       )}
@@ -224,6 +247,7 @@ export function EventForm({
               mode={allDay ? 'date' : 'datetime'}
               display="compact"
               accentColor={theme.colors.primary}
+              locale={iosPickerLocale}
               onChange={handleIosEndChange}
             />
           </View>
@@ -235,7 +259,7 @@ export function EventForm({
         <DateField
           label={t('event.end')}
           value={dayjs(dtend).format('ddd ll')}
-          time={allDay ? undefined : dayjs(dtend).format('LT')}
+          time={allDay ? undefined : formatTime(dtend)}
           onPress={openEndPicker}
           error={endError ?? undefined}
         />
@@ -313,6 +337,7 @@ export function EventForm({
             key={`android-picker-${androidStep.target}-${androidStep.step}`}
             value={androidPickerValue ?? new Date()}
             mode={androidPickerMode}
+            is24Hour={use24h}
             onChange={handleAndroidChange}
           />
         )}
@@ -327,7 +352,7 @@ export function EventForm({
             <RecurrencePicker value={rrule} onChange={setRrule} dtstart={dtstart} allDay={allDay} />
           </View>
           <View style={twoColDates ? styles.grow : undefined}>
-            <AlertPicker value={alarmMinutes} onChange={setAlarmMinutes} />
+            <AlertPicker value={alarms} onChange={setAlarms} />
           </View>
         </Stack>
 
