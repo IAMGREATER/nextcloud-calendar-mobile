@@ -221,13 +221,11 @@ function getDayEventLines(
 
 function MonthAndroidWidget({ snapshot, isDark }: { snapshot: MonthWidgetSnapshot | null; isDark?: boolean }) {
   const settings = useCalendarStore.getState();
-  const dark = isDark !== undefined
-    ? isDark
-    : settings.monthWidgetTheme === 'dark'
+  const dark = settings.monthWidgetTheme === 'dark'
     ? true
     : settings.monthWidgetTheme === 'light'
     ? false
-    : true;
+    : (isDark ?? true);
 
   const cardStyle = settings.monthWidgetCardStyle;
   const currentOffset = snapshot?.monthOffset ?? 0;
