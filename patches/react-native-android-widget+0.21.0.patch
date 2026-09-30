@@ -84,3 +84,55 @@
                  | PendingIntent.FLAG_MUTABLE
          );
          widgetView.setOnClickPendingIntent(button, pendingIntent);
+--- a/node_modules/react-native-android-widget/android/src/main/res/layout/rn_widget.xml
++++ b/node_modules/react-native-android-widget/android/src/main/res/layout/rn_widget.xml
+@@ -8,7 +8,7 @@
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         android:background="@android:color/transparent"
+-        android:scaleType="matrix"
++        android:scaleType="fitXY"
+         android:visibility="visible" />
+ 
+     <ImageView
+@@ -16,7 +16,7 @@
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         android:background="@android:color/transparent"
+-        android:scaleType="matrix"
++        android:scaleType="fitXY"
+         android:visibility="gone" />
+ 
+     <FrameLayout
+--- a/node_modules/react-native-android-widget/android/src/main/res/layout-night/rn_widget.xml
++++ b/node_modules/react-native-android-widget/android/src/main/res/layout-night/rn_widget.xml
+@@ -8,7 +8,7 @@
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         android:background="@android:color/transparent"
+-        android:scaleType="matrix"
++        android:scaleType="fitXY"
+         android:visibility="gone" />
+ 
+     <ImageView
+@@ -16,7 +16,7 @@
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         android:background="@android:color/transparent"
+-        android:scaleType="matrix"
++        android:scaleType="fitXY"
+         android:visibility="visible" />
+ 
+     <FrameLayout
+--- a/node_modules/react-native-android-widget/android/src/main/java/com/reactnativeandroidwidget/RNWidgetImageProvider.java
++++ b/node_modules/react-native-android-widget/android/src/main/java/com/reactnativeandroidwidget/RNWidgetImageProvider.java
+@@ -114,7 +114,8 @@
+         return new Uri.Builder()
+             .scheme("content")
+             .authority(authority)
+-            .appendPath(fileName + "?cacheKey=" + System.currentTimeMillis())
++            .appendPath(fileName)
++            .appendQueryParameter("cacheKey", String.valueOf(System.currentTimeMillis()))
+             .build();
+     }
+ 
