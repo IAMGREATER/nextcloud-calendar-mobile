@@ -1,26 +1,177 @@
+--- a/node_modules/react-native-android-widget/android/src/main/res/layout-night/rn_widget.xml
++++ b/node_modules/react-native-android-widget/android/src/main/res/layout-night/rn_widget.xml
+@@ -1,31 +1,31 @@
+-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+-    android:id="@android:id/background"
+-    android:layout_width="match_parent"
+-    android:layout_height="match_parent">
+-
+-    <ImageView
+-        android:id="@+id/rn_widget_image_light"
+-        android:layout_width="match_parent"
+-        android:layout_height="match_parent"
+-        android:background="@android:color/transparent"
+-        android:scaleType="matrix"
+-        android:visibility="gone" />
+-
+-    <ImageView
+-        android:id="@+id/rn_widget_image_dark"
+-        android:layout_width="match_parent"
+-        android:layout_height="match_parent"
+-        android:background="@android:color/transparent"
+-        android:scaleType="matrix"
+-        android:visibility="visible" />
+-
+-    <FrameLayout
+-        android:id="@+id/rn_widget_clickable_container"
+-        android:layout_width="match_parent"
+-        android:layout_height="match_parent" />
+-
+-    <FrameLayout
+-        android:id="@+id/rn_widget_collection_container"
+-        android:layout_width="match_parent"
+-        android:layout_height="match_parent" />
+-</FrameLayout>
++<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    android:id="@android:id/background"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent">
++
++    <ImageView
++        android:id="@+id/rn_widget_image_light"
++        android:layout_width="match_parent"
++        android:layout_height="match_parent"
++        android:background="@android:color/transparent"
++        android:scaleType="fitXY"
++        android:visibility="gone" />
++
++    <ImageView
++        android:id="@+id/rn_widget_image_dark"
++        android:layout_width="match_parent"
++        android:layout_height="match_parent"
++        android:background="@android:color/transparent"
++        android:scaleType="fitXY"
++        android:visibility="visible" />
++
++    <FrameLayout
++        android:id="@+id/rn_widget_clickable_container"
++        android:layout_width="match_parent"
++        android:layout_height="match_parent" />
++
++    <FrameLayout
++        android:id="@+id/rn_widget_collection_container"
++        android:layout_width="match_parent"
++        android:layout_height="match_parent" />
++</FrameLayout>
+--- a/node_modules/react-native-android-widget/android/src/main/res/layout/rn_widget.xml
++++ b/node_modules/react-native-android-widget/android/src/main/res/layout/rn_widget.xml
+@@ -1,31 +1,31 @@
+-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+-    android:id="@android:id/background"
+-    android:layout_width="match_parent"
+-    android:layout_height="match_parent">
+-
+-    <ImageView
+-        android:id="@+id/rn_widget_image_light"
+-        android:layout_width="match_parent"
+-        android:layout_height="match_parent"
+-        android:background="@android:color/transparent"
+-        android:scaleType="matrix"
+-        android:visibility="visible" />
+-
+-    <ImageView
+-        android:id="@+id/rn_widget_image_dark"
+-        android:layout_width="match_parent"
+-        android:layout_height="match_parent"
+-        android:background="@android:color/transparent"
+-        android:scaleType="matrix"
+-        android:visibility="gone" />
+-
+-    <FrameLayout
+-        android:id="@+id/rn_widget_clickable_container"
+-        android:layout_width="match_parent"
+-        android:layout_height="match_parent" />
+-
+-    <FrameLayout
+-        android:id="@+id/rn_widget_collection_container"
+-        android:layout_width="match_parent"
+-        android:layout_height="match_parent" />
+-</FrameLayout>
++<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    android:id="@android:id/background"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent">
++
++    <ImageView
++        android:id="@+id/rn_widget_image_light"
++        android:layout_width="match_parent"
++        android:layout_height="match_parent"
++        android:background="@android:color/transparent"
++        android:scaleType="fitXY"
++        android:visibility="visible" />
++
++    <ImageView
++        android:id="@+id/rn_widget_image_dark"
++        android:layout_width="match_parent"
++        android:layout_height="match_parent"
++        android:background="@android:color/transparent"
++        android:scaleType="fitXY"
++        android:visibility="gone" />
++
++    <FrameLayout
++        android:id="@+id/rn_widget_clickable_container"
++        android:layout_width="match_parent"
++        android:layout_height="match_parent" />
++
++    <FrameLayout
++        android:id="@+id/rn_widget_collection_container"
++        android:layout_width="match_parent"
++        android:layout_height="match_parent" />
++</FrameLayout>
+--- a/node_modules/react-native-android-widget/android/src/main/res/layout/rn_widget_clickable.xml
++++ b/node_modules/react-native-android-widget/android/src/main/res/layout/rn_widget_clickable.xml
+@@ -5,8 +5,9 @@
+ 
+     <FrameLayout
+         android:id="@+id/rn_widget_clickable_area"
+-        android:layout_width="match_parent"
++        android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
++        android:layout_gravity="top|left"
+         android:background="?android:attr/selectableItemBackground"
+         android:clickable="true"
+         android:focusable="true" />
 --- a/node_modules/react-native-android-widget/android/src/main/java/com/reactnativeandroidwidget/RNWidget.java
 +++ b/node_modules/react-native-android-widget/android/src/main/java/com/reactnativeandroidwidget/RNWidget.java
-@@ -170,12 +170,17 @@
+@@ -169,5 +169,7 @@
+         clickableWidget.getDrawingRect(offsetViewBounds);
          rootWidget.offsetDescendantRectToMyCoords(clickableWidget, offsetViewBounds);
          RemoteViews clickableRemoteView = new RemoteViews(appContext.getPackageName(), R.layout.rn_widget_clickable);
++        float horizontalScale = (float) android.util.DisplayMetrics.DENSITY_DEVICE_STABLE
++            / appContext.getResources().getDisplayMetrics().densityDpi;
  
-+        int rootWidth = rootWidget.getWidth() > 0 ? rootWidget.getWidth() : RNWidgetUtil.dpToPx(appContext, RNWidgetUtil.getWidgetWidth(appContext, widgetId));
-+        int rootHeight = rootWidget.getHeight() > 0 ? rootWidget.getHeight() : RNWidgetUtil.dpToPx(appContext, RNWidgetUtil.getWidgetHeight(appContext, widgetId));
-+        int rightPadding = Math.max(0, rootWidth - offsetViewBounds.right);
-+        int bottomPadding = Math.max(0, rootHeight - offsetViewBounds.bottom);
-+
          clickableRemoteView.setViewPadding(
+@@ -174,11 +176,16 @@
              R.id.rn_widget_clickable_positioner,
-             offsetViewBounds.left,
+-            offsetViewBounds.left,
++            Math.round(offsetViewBounds.left * horizontalScale),
              offsetViewBounds.top,
 -            RNWidgetUtil.dpToPx(appContext, RNWidgetUtil.getWidgetWidth(appContext, widgetId)) - offsetViewBounds.right,
--            0
-+            rightPadding,
-+            bottomPadding
++            0,
+             0
          );
  
-         clickableRemoteView.setInt(R.id.rn_widget_clickable_area, "setMinimumHeight", offsetViewBounds.height());
-@@ -199,17 +204,59 @@
+-        clickableRemoteView.setInt(R.id.rn_widget_clickable_area, "setMinimumHeight", offsetViewBounds.height());
++        clickableRemoteView.setInt(
++            R.id.rn_widget_clickable_area,
++            "setMinimumWidth",
++            Math.max(1, Math.round(offsetViewBounds.width() * horizontalScale))
++        );
++        clickableRemoteView.setInt(R.id.rn_widget_clickable_area, "setMinimumHeight", Math.max(1, offsetViewBounds.height()));
+ 
+         // The clickable overlay draws its own ripple, so match it to the view's radius when supported
+         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && clickableView.getBorderRadius() > 0f) {
+@@ -199,17 +200,59 @@
          widgetView.addView(R.id.rn_widget_clickable_container, clickableRemoteView);
      }
  
@@ -84,55 +235,337 @@
                  | PendingIntent.FLAG_MUTABLE
          );
          widgetView.setOnClickPendingIntent(button, pendingIntent);
---- a/node_modules/react-native-android-widget/android/src/main/res/layout/rn_widget.xml
-+++ b/node_modules/react-native-android-widget/android/src/main/res/layout/rn_widget.xml
-@@ -8,7 +8,7 @@
-         android:layout_width="match_parent"
-         android:layout_height="match_parent"
-         android:background="@android:color/transparent"
--        android:scaleType="matrix"
-+        android:scaleType="fitXY"
-         android:visibility="visible" />
- 
-     <ImageView
-@@ -16,7 +16,7 @@
-         android:layout_width="match_parent"
-         android:layout_height="match_parent"
-         android:background="@android:color/transparent"
--        android:scaleType="matrix"
-+        android:scaleType="fitXY"
-         android:visibility="gone" />
- 
-     <FrameLayout
---- a/node_modules/react-native-android-widget/android/src/main/res/layout-night/rn_widget.xml
-+++ b/node_modules/react-native-android-widget/android/src/main/res/layout-night/rn_widget.xml
-@@ -8,7 +8,7 @@
-         android:layout_width="match_parent"
-         android:layout_height="match_parent"
-         android:background="@android:color/transparent"
--        android:scaleType="matrix"
-+        android:scaleType="fitXY"
-         android:visibility="gone" />
- 
-     <ImageView
-@@ -16,7 +16,7 @@
-         android:layout_width="match_parent"
-         android:layout_height="match_parent"
-         android:background="@android:color/transparent"
--        android:scaleType="matrix"
-+        android:scaleType="fitXY"
-         android:visibility="visible" />
- 
-     <FrameLayout
 --- a/node_modules/react-native-android-widget/android/src/main/java/com/reactnativeandroidwidget/RNWidgetImageProvider.java
 +++ b/node_modules/react-native-android-widget/android/src/main/java/com/reactnativeandroidwidget/RNWidgetImageProvider.java
-@@ -114,7 +114,8 @@
-         return new Uri.Builder()
-             .scheme("content")
-             .authority(authority)
+@@ -1,125 +1,125 @@
+-package com.reactnativeandroidwidget;
+-
+-import android.content.ContentProvider;
+-import android.content.ContentValues;
+-import android.content.Context;
+-import android.database.Cursor;
+-import android.graphics.Bitmap;
+-import android.net.Uri;
+-import android.os.ParcelFileDescriptor;
+-import androidx.annotation.NonNull;
+-import androidx.annotation.Nullable;
+-
+-import java.io.File;
+-import java.io.FileNotFoundException;
+-import java.io.FileOutputStream;
+-import java.io.IOException;
+-
+-public class RNWidgetImageProvider extends ContentProvider {
+-    public static final String AUTHORITY_SUFFIX = ".rnwidget.imageprovider";
+-
+-    @Override
+-    public boolean onCreate() {
+-        return true;
+-    }
+-
+-    @Override
+-    public ParcelFileDescriptor openFile(@NonNull Uri uri, @NonNull String mode) throws FileNotFoundException {
+-        if (!"r".equals(mode)) {
+-            throw new FileNotFoundException("Write access denied. This provider is Read-Only.");
+-        }
+-
+-        String fileName = uri.getLastPathSegment();
+-        if (fileName == null) {
+-            throw new FileNotFoundException("Invalid URI: " + uri);
+-        }
+-
+-        File folder = getFolderWithImages(getContext());
+-        File file = new File(folder, fileName.replaceAll("\\?.*", ""));
+-
+-        // Verify the file exists and is actually inside our folder (Path Traversal check)
+-        try {
+-            if (!file.getCanonicalPath().startsWith(folder.getCanonicalPath())) {
+-                throw new FileNotFoundException("Access denied: File is outside widget directory.");
+-            }
+-        } catch (Exception e) {
+-            throw new FileNotFoundException("Path security check failed.");
+-        }
+-
+-        if (!file.exists()) {
+-            throw new FileNotFoundException("File not found: " + file.getPath());
+-        }
+-
+-        return ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
+-    }
+-
+-    // --- Boilerplate required for ContentProvider ---
+-    @Nullable @Override
+-    public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) { return null; }
+-    @Nullable @Override
+-    public String getType(@NonNull Uri uri) { return "image/png"; } // Assume PNGs
+-    @Nullable @Override
+-    public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) { return null; }
+-    @Override
+-    public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) { return 0; }
+-    @Override
+-    public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) { return 0; }
+-
+-    static void deleteWidgetImages(Context context, int widgetId) {
+-        deleteImages(context, "widget_" + widgetId + "_");
+-    }
+-
+-    static void deleteCollectionImages(Context context, int widgetId, int collectionId, String mode) {
+-        deleteImages(context, "widget_" + widgetId + "_mode_" + mode + "_collection_" + collectionId + "_");
+-    }
+-
+-    private static void deleteImages(Context context, String prefix) {
+-        File folder = getFolderWithImages(context);
+-        File[] files = folder.listFiles(pathname -> pathname.getName().startsWith(prefix));
+-
+-        if (files == null) {
+-            return;
+-        }
+-
+-        for (File f : files) {
+-            f.delete();
+-        }
+-    }
+-
+-    static void writeImage(Context context, String imageName, Bitmap bitmap) {
+-        File folder = getFolderWithImages(context);
+-        if (!folder.exists()) folder.mkdirs();
+-        File file = new File(folder, imageName);
+-
+-        FileOutputStream fos = null;
+-        try {
+-            fos = new FileOutputStream(file);
+-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+-        } catch (Exception e) {
+-            e.printStackTrace();
+-        } finally {
+-            try {
+-                if (fos != null) {
+-                    fos.close();
+-                }
+-            } catch (IOException e) {
+-                e.printStackTrace();
+-            }
+-        }
+-    }
+-
+-    static Uri getImageUri(Context context, String fileName) {
+-        String authority = context.getPackageName() + AUTHORITY_SUFFIX;
+-
+-        return new Uri.Builder()
+-            .scheme("content")
+-            .authority(authority)
+-            // Add cacheKey since the uri is cached and returns old images
 -            .appendPath(fileName + "?cacheKey=" + System.currentTimeMillis())
+-            .build();
+-    }
+-
+-    private static File getFolderWithImages(Context context) {
+-        return new File(context.getFilesDir(), "widget_images");
+-    }
+-}
++package com.reactnativeandroidwidget;
++
++import android.content.ContentProvider;
++import android.content.ContentValues;
++import android.content.Context;
++import android.database.Cursor;
++import android.graphics.Bitmap;
++import android.net.Uri;
++import android.os.ParcelFileDescriptor;
++import androidx.annotation.NonNull;
++import androidx.annotation.Nullable;
++
++import java.io.File;
++import java.io.FileNotFoundException;
++import java.io.FileOutputStream;
++import java.io.IOException;
++
++public class RNWidgetImageProvider extends ContentProvider {
++    public static final String AUTHORITY_SUFFIX = ".rnwidget.imageprovider";
++
++    @Override
++    public boolean onCreate() {
++        return true;
++    }
++
++    @Override
++    public ParcelFileDescriptor openFile(@NonNull Uri uri, @NonNull String mode) throws FileNotFoundException {
++        if (!"r".equals(mode)) {
++            throw new FileNotFoundException("Write access denied. This provider is Read-Only.");
++        }
++
++        String fileName = uri.getLastPathSegment();
++        if (fileName == null) {
++            throw new FileNotFoundException("Invalid URI: " + uri);
++        }
++
++        File folder = getFolderWithImages(getContext());
++        File file = new File(folder, fileName.replaceAll("(?i)(%3F|\\?).*", ""));
++
++        // Verify the file exists and is actually inside our folder (Path Traversal check)
++        try {
++            if (!file.getCanonicalPath().startsWith(folder.getCanonicalPath())) {
++                throw new FileNotFoundException("Access denied: File is outside widget directory.");
++            }
++        } catch (Exception e) {
++            throw new FileNotFoundException("Path security check failed.");
++        }
++
++        if (!file.exists()) {
++            throw new FileNotFoundException("File not found: " + file.getPath());
++        }
++
++        return ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
++    }
++
++    // --- Boilerplate required for ContentProvider ---
++    @Nullable @Override
++    public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) { return null; }
++    @Nullable @Override
++    public String getType(@NonNull Uri uri) { return "image/png"; } // Assume PNGs
++    @Nullable @Override
++    public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) { return null; }
++    @Override
++    public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) { return 0; }
++    @Override
++    public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) { return 0; }
++
++    static void deleteWidgetImages(Context context, int widgetId) {
++        deleteImages(context, "widget_" + widgetId + "_");
++    }
++
++    static void deleteCollectionImages(Context context, int widgetId, int collectionId, String mode) {
++        deleteImages(context, "widget_" + widgetId + "_mode_" + mode + "_collection_" + collectionId + "_");
++    }
++
++    private static void deleteImages(Context context, String prefix) {
++        File folder = getFolderWithImages(context);
++        File[] files = folder.listFiles(pathname -> pathname.getName().startsWith(prefix));
++
++        if (files == null) {
++            return;
++        }
++
++        for (File f : files) {
++            f.delete();
++        }
++    }
++
++    static void writeImage(Context context, String imageName, Bitmap bitmap) {
++        File folder = getFolderWithImages(context);
++        if (!folder.exists()) folder.mkdirs();
++        File file = new File(folder, imageName);
++
++        FileOutputStream fos = null;
++        try {
++            fos = new FileOutputStream(file);
++            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
++        } catch (Exception e) {
++            e.printStackTrace();
++        } finally {
++            try {
++                if (fos != null) {
++                    fos.close();
++                }
++            } catch (IOException e) {
++                e.printStackTrace();
++            }
++        }
++    }
++
++    static Uri getImageUri(Context context, String fileName) {
++        String authority = context.getPackageName() + AUTHORITY_SUFFIX;
++
++        return new Uri.Builder()
++            .scheme("content")
++            .authority(authority)
 +            .appendPath(fileName)
 +            .appendQueryParameter("cacheKey", String.valueOf(System.currentTimeMillis()))
-             .build();
++            .build();
++    }
++
++    private static File getFolderWithImages(Context context) {
++        return new File(context.getFilesDir(), "widget_images");
++    }
++}
+--- a/node_modules/react-native-android-widget/android/src/main/java/com/reactnativeandroidwidget/RNWidgetProvider.java
++++ b/node_modules/react-native-android-widget/android/src/main/java/com/reactnativeandroidwidget/RNWidgetProvider.java
+@@ -144,9 +144,12 @@
+ 
+         if (incomingIntent.hasExtra("clickAction")) {
+             Bundle clickActionData = incomingIntent.getBundleExtra("clickActionData");
++            JSONObject dataJson = clickActionData != null
++                ? new JSONObject(Arguments.fromBundle(clickActionData).toHashMap())
++                : new JSONObject();
+             additionalData = new Data.Builder()
+                 .putString("clickAction", incomingIntent.getStringExtra("clickAction"))
+-                .putString("clickActionData", new JSONObject(Arguments.fromBundle(clickActionData).toHashMap()).toString())
++                .putString("clickActionData", dataJson.toString())
+                 .build();
+         }
+ 
+--- a/node_modules/react-native-android-widget/android/src/main/java/com/reactnativeandroidwidget/RNWidgetUtil.java
++++ b/node_modules/react-native-android-widget/android/src/main/java/com/reactnativeandroidwidget/RNWidgetUtil.java
+@@ -35,12 +35,28 @@
+         }
      }
  
++    public static DisplayMetrics getDisplayMetrics(Context context) {
++        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
++            android.hardware.display.DisplayManager dm =
++                (android.hardware.display.DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
++            if (dm != null) {
++                android.view.Display display = dm.getDisplay(android.view.Display.DEFAULT_DISPLAY);
++                if (display != null) {
++                    DisplayMetrics dmMetrics = new DisplayMetrics();
++                    display.getRealMetrics(dmMetrics);
++                    return dmMetrics;
++                }
++            }
++        }
++        return context.getResources().getDisplayMetrics();
++    }
++
+     public static int dpToPx(Context context, double dpValue) {
+-        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) dpValue, context.getResources().getDisplayMetrics()));
++        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) dpValue, getDisplayMetrics(context)));
+     }
+ 
+     public static double pxToDp(Context context, double pxValue) {
+-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
++        DisplayMetrics displayMetrics = getDisplayMetrics(context);
+         return pxValue / displayMetrics.density;
+     }
+ 
+@@ -71,8 +87,9 @@
+         WritableMap screenInfo = Arguments.createMap();
+         screenInfo.putInt("screenHeightDp", context.getResources().getConfiguration().screenHeightDp);
+         screenInfo.putInt("screenWidthDp", context.getResources().getConfiguration().screenWidthDp);
+-        screenInfo.putDouble("density", context.getResources().getDisplayMetrics().density);
+-        screenInfo.putInt("densityDpi", context.getResources().getDisplayMetrics().densityDpi);
++        DisplayMetrics metrics = getDisplayMetrics(context);
++        screenInfo.putDouble("density", metrics.density);
++        screenInfo.putInt("densityDpi", metrics.densityDpi);
+         return screenInfo;
+     }
+ 
+--- a/node_modules/react-native-android-widget/android/src/main/java/com/reactnativeandroidwidget/builder/widget/BaseWidget.java
++++ b/node_modules/react-native-android-widget/android/src/main/java/com/reactnativeandroidwidget/builder/widget/BaseWidget.java
+@@ -240,6 +240,6 @@
+     }
+ 
+     protected int dpToPx(double dpValue) {
+-        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) dpValue, appContext.getResources().getDisplayMetrics()));
++        return com.reactnativeandroidwidget.RNWidgetUtil.dpToPx(appContext, dpValue);
+     }
+ }
+--- a/node_modules/react-native-android-widget/android/src/main/java/com/reactnativeandroidwidget/builder/widget/TextWidget.java
++++ b/node_modules/react-native-android-widget/android/src/main/java/com/reactnativeandroidwidget/builder/widget/TextWidget.java
+@@ -149,6 +149,6 @@
+     }
+ 
+     private int textSizeToPx(double value) {
+-        return Math.round(TypedValue.applyDimension(getFontSizeUnit(), (float) value, appContext.getResources().getDisplayMetrics()));
++        return Math.round(TypedValue.applyDimension(getFontSizeUnit(), (float) value, com.reactnativeandroidwidget.RNWidgetUtil.getDisplayMetrics(appContext)));
+     }
+ }

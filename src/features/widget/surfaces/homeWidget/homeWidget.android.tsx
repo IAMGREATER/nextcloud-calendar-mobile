@@ -390,8 +390,8 @@ function MonthAndroidWidget({ snapshot, isDark }: { snapshot: MonthWidgetSnapsho
         {/* Prev (❮) */}
         <FlexWidget
           style={{
-            width: 34,
-            height: 38,
+            width: 44,
+            height: 44,
             justifyContent: 'center',
             alignItems: 'center',
           }}
@@ -411,8 +411,8 @@ function MonthAndroidWidget({ snapshot, isDark }: { snapshot: MonthWidgetSnapsho
         {/* Today (↺) */}
         <FlexWidget
           style={{
-            width: 34,
-            height: 38,
+            width: 44,
+            height: 44,
             justifyContent: 'center',
             alignItems: 'center',
           }}
@@ -432,8 +432,8 @@ function MonthAndroidWidget({ snapshot, isDark }: { snapshot: MonthWidgetSnapsho
         {/* Next (❯) */}
         <FlexWidget
           style={{
-            width: 34,
-            height: 38,
+            width: 44,
+            height: 44,
             justifyContent: 'center',
             alignItems: 'center',
           }}
@@ -453,8 +453,8 @@ function MonthAndroidWidget({ snapshot, isDark }: { snapshot: MonthWidgetSnapsho
         {/* Add (+) */}
         <FlexWidget
           style={{
-            width: 34,
-            height: 38,
+            width: 44,
+            height: 44,
             justifyContent: 'center',
             alignItems: 'center',
           }}
